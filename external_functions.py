@@ -35,26 +35,6 @@ from sklearn.metrics import roc_curve, precision_recall_curve, roc_auc_score
 from sklearn.metrics import confusion_matrix,classification_report
 from sklearn.ensemble import RandomForestClassifier
 
-import urllib
-import base64
-from io import BytesIO, StringIO
-
-
-def logistic_pipeline(X_train, y_train):
-    '''Run the logistic pipeline as in the original notebook '''
-    # we used one-hot encoding for the `number` feature.
-    #m = LogisticRegression(penalty = 'none', fit_intercept = False, solver='lbfgs', max_iter=1000).fit(X, y)
-    m = make_pipeline(
-        # StandardScaler(),
-        LogisticRegression())
-
-    param_grid = {'logisticregression__C':  np.linspace(0.1, 10, 10)}
-
-    kf = KFold(n_splits=5, shuffle=True, random_state=0)
-    logreg_model = GridSearchCV(m, param_grid, cv= kf).fit(X_train, y_train)
-    
-    return logreg_model
-
 def dectree_pipeline(X_train, y_train):
     '''Run the decison tree pipeline as in original notebook '''
     pipe_dectree = make_pipeline(
@@ -65,8 +45,18 @@ def dectree_pipeline(X_train, y_train):
 
     kf = KFold(n_splits=5, shuffle=True, random_state=0)
     dectree_model = GridSearchCV(pipe_dectree, param_grid = parameters, scoring="accuracy", cv=kf,return_train_score=True).fit(X_train, y_train)
-    # models_tree
-
-    y_hat_dectree = dectree_model.predict(X_test)
 
     return dectree_model
+
+def logistic_pipeline(X_train, y_train):
+    '''Run the logistic pipeline as in the original notebook '''
+    #m = LogisticRegression(penalty = 'none', fit_intercept = False, solver='lbfgs', max_iter=1000).fit(X, y)
+    m = make_pipeline(LogisticRegression())
+
+    param_grid = {'logisticregression__C':  np.linspace(0.1, 10, 10)}
+
+    kf = KFold(n_splits=5, shuffle=True, random_state=0)
+    logreg_model = GridSearchCV(m, param_grid, cv= kf).fit(X_train, y_train)
+    
+    return logreg_model
+
